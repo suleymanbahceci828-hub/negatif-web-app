@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEGATİF - Yarışma Görüntüleyici</title>
+    <style>
+        /* Tasarım Atölyesi Kurumsal Renklerine Uygun Minimal Arayüz */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: sans-serif;
+        }
+
+        #video-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* KRİTİK NOKTA: Negatif filtreyi burada uyguluyoruz */
+            filter: invert(100%);
+            -webkit-filter: invert(100%);
+        }
+
+        .overlay {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            z-index: 10;
+        }
+
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #fff;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">NEGATİF YARIŞMA GÖRÜNTÜLEYİCİ</div>
+
+    <div id="video-container">
+        <video id="camera-stream" autoplay playsinline></video>
+    </div>
+
+    <div class="overlay">
+        <p>Eseri kameraya odaklayın</p>
+        <button onclick="toggleFilter()">Filtreyi Değiştir</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('camera-stream');
+        let isFlipped = true;
+
+        // Kameraya erişim izni iste
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment", // Arka kamerayı seçer
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Kamera erişim hatası: ", err);
+                alert("Kameraya erişim izni verilmedi veya cihaz desteklemiyor.");
+            }
+        }
+
+        // Filtreyi aç-kapat (Jürinin eserin ham halini de görmesi için)
+        function toggleFilter() {
+            if (isFlipped) {
+                video.style.filter = "none";
+                video.style.webkitFilter = "none";
+            } else {
+                video.style.filter = "invert(100%)";
+                video.style.webkitFilter = "invert(100%)";
+            }
+            isFlipped = !isFlipped;
+        }
+
+        // Sayfa yüklendiğinde kamerayı başlat
+        window.addEventListener('load', startCamera);
+    </script>
+</body>
+</html>
