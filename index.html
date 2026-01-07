@@ -6,63 +6,33 @@
     <title>NEGATİF - Tasarım Atölyesi</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: sans-serif; }
-        #video-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        
+        /* Kamera Konteynırı */
+        #video-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 1; }
+        
+        /* Sadece video negatif olacak */
         video { width: 100%; height: 100%; object-fit: cover; filter: invert(100%); -webkit-filter: invert(100%); }
         
-        /* Logo ve Header Düzenlemesi */
+        /* Üst Panel (Logo Buradadır ve Negatif Değildir) */
         .header { 
             position: absolute; top: 0; left: 0; right: 0; 
-            background: rgba(0,0,0,0.7); padding: 15px; 
+            background: rgba(0,0,0,0.8); padding: 15px; 
             display: flex; align-items: center; justify-content: center; 
-            z-index: 20; border-bottom: 1px solid #333;
+            z-index: 100; /* Videonun üstünde kalmasını sağlar */
+            border-bottom: 1px solid #333;
         }
-        .header img { height: 40px; margin-right: 15px; filter: invert(100%); } /* Logo negatif görünmesin diye invert ekledim */
-        .header span { color: #fff; font-weight: bold; letter-spacing: 1px; font-size: 14px; }
+        
+        /* Logo Ayarları: Filtre eklemedik, orijinal haliyle görünür */
+        .header img { height: 45px; margin-right: 15px; display: block; }
+        .header span { color: #fff; font-weight: bold; letter-spacing: 1px; font-size: 14px; text-transform: uppercase; }
 
-        .overlay { position: absolute; bottom: 30px; left: 0; right: 0; text-align: center; color: white; z-index: 10; }
-        button { background: #fff; border: none; padding: 12px 24px; border-radius: 50px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        /* Alt Yazı ve Buton Paneli */
+        .overlay { position: absolute; bottom: 40px; left: 0; right: 0; text-align: center; color: white; z-index: 100; }
+        button { background: #fff; border: none; padding: 14px 28px; border-radius: 50px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-size: 13px; }
+        p { margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,1); font-size: 15px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <img src="logo.png" alt="Tasarım Atölyesi Logo">
-        <span>NEGATİF YARIŞMA GÖRÜNTÜLEYİCİ</span>
-    </div>
-    
-    <div id="video-container">
-        <video id="camera-stream" autoplay playsinline></video>
-    </div>
-    
-    <div class="overlay">
-        <p style="text-shadow: 1px 1px 5px #000;">Eseri kameraya odaklayın</p>
-        <button onclick="toggleFilter()">Filtreyi Değiştir</button>
-    </div>
-
-    <script>
-        const video = document.getElementById('camera-stream');
-        let isFlipped = true;
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } },
-                    audio: false
-                });
-                video.srcObject = stream;
-            } catch (err) {
-                alert("Kamera hatası: " + err);
-            }
-        }
-        function toggleFilter() {
-            if (isFlipped) {
-                video.style.filter = "none";
-                video.style.webkitFilter = "none";
-            } else {
-                video.style.filter = "invert(100%)";
-                video.style.webkitFilter = "invert(100%)";
-            }
-            isFlipped = !isFlipped;
-        }
-        window.addEventListener('load', startCamera);
-    </script>
-</body>
-</html>
+    <header class="header">
+        <img src="logo.png" alt="Tasarım Atölyesi">
+        <span>NEGATİF YARIŞMA GÖR
