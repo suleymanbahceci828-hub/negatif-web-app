@@ -5,34 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEGATİF - Tasarım Atölyesi</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: sans-serif; }
+        /* Temel Sıfırlama */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* Kamera Konteynırı */
-        #video-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; z-index: 1; }
-        
-        /* Sadece video negatif olacak */
-        video { width: 100%; height: 100%; object-fit: cover; filter: invert(100%); -webkit-filter: invert(100%); }
-        
-        /* Üst Panel (Logo Buradadır ve Negatif Değildir) */
+        /* Üst Panel: Logo burada korunur */
         .header { 
             position: absolute; top: 0; left: 0; right: 0; 
-            background: rgba(0,0,0,0.8); padding: 15px; 
-            display: flex; align-items: center; justify-content: center; 
-            z-index: 100; /* Videonun üstünde kalmasını sağlar */
-            border-bottom: 1px solid #333;
+            background: rgba(0,0,0,0.85); padding: 12px 20px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            z-index: 999; /* Kameranın her zaman üstünde kalması için */
+            border-bottom: 1px solid #222;
         }
-        
-        /* Logo Ayarları: Filtre eklemedik, orijinal haliyle görünür */
-        .header img { height: 45px; margin-right: 15px; display: block; }
-        .header span { color: #fff; font-weight: bold; letter-spacing: 1px; font-size: 14px; text-transform: uppercase; }
 
-        /* Alt Yazı ve Buton Paneli */
-        .overlay { position: absolute; bottom: 40px; left: 0; right: 0; text-align: center; color: white; z-index: 100; }
-        button { background: #fff; border: none; padding: 14px 28px; border-radius: 50px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); font-size: 13px; }
-        p { margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,1); font-size: 15px; }
+        /* LOGO AYARI: Filtreyi kaldırdık, orijinal renk neyse o görünür */
+        .logo-container img { 
+            height: 40px; 
+            display: block; 
+            filter: none !important; 
+            -webkit-filter: none !important; 
+        }
+
+        .header-title { color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
+
+        /* Kamera Alanı */
+        #video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        /* SADECE VİDEO NEGATİF OLACAK */
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .negative-mode { filter: invert(100%); -webkit-filter: invert(100%); }
+
+        /* Alt Kontroller */
+        .controls { position: absolute; bottom: 40px; left: 0; right: 0; text-align: center; z-index: 999; }
+        button { 
+            background: #fff; border: none; padding: 15px 30px; border-radius: 50px; 
+            font-weight: bold; text-transform: uppercase; cursor: pointer; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.6); font-size: 14px; transition: 0.3s;
+        }
+        button:active { transform: scale(0.95); }
+        .hint { color: #fff; margin-bottom: 10px; font-size: 14px; text-shadow: 1px 1px 3px #000; }
     </style>
 </head>
 <body>
+
     <header class="header">
-        <img src="logo.png" alt="Tasarım Atölyesi">
-        <span>NEGATİF YARIŞMA GÖR
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo">
+        </div>
+        <div class="header-title">Negatif Yarışma</div>
+    </header>
+    
+    <div id="video-container">
+        <video id="camera-stream" class="negative-mode" autoplay playsinline></video>
+    </div>
+    
+    <div class="controls">
+        <p class="hint">Eseri kameraya odaklayın</p>
+        <button onclick="toggleFilter()">Filtreyi Değiştir</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('camera-stream');
+        let isNegative = true;
+
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } },
+                    audio: false
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                alert("Kamera hatası: " + err.message);
+            }
+        }
+
+        function toggleFilter() {
+            if (isNegative) {
+                video.classList.remove('negative-mode');
+            } else {
+                video.classList.add('negative-mode');
+            }
+            isNegative = !isNegative;
+        }
+
+        window.addEventListener('load', startCamera);
+    </script>
+</body>
+</html>
